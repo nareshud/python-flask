@@ -25,7 +25,7 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
     - name: Build Docker Image
       run: |
-        docker build -t nareshprk/flask:${{ github.sha }}
+        docker build -t nareshprk/flask:${{ github.sha }} .
     - name: Push Docker image
       run: |
         docker push nareshprk/flask:${{ github.sha }}
