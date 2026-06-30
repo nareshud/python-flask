@@ -1,30 +1,35 @@
 name: Deploy
 
 on:
-  push:
-    branches:
-      - flask/app
+  workflow_dispatch: 
 
 permissions:
   id-token: write
   contents: read
-
 jobs:
-
   deploy:
-
     runs-on: ubuntu-latest
-
     steps:
-
       - uses: actions/checkout@v4
-
+      - name: setup python environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          pip install -r requirement.txt
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
-
         with:
           role-to-assume: arn:aws:iam::403884279236:role/githubactions
           aws-region: us-east-2
 
       - name: Verify Identity
         run: aws sts get-caller-identity
+      - name: Login ECR
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: build image and push
+        run: |
+          docker build -t nareshprk/flask:${{ github.sha }} .
+          docker tag nareshprk/flask:${{ github.sha }} 403884279236.dkr.ecr.us-east-2.amazonaws.com/nareshprk/flask:${{ github.sha }}
+          docker push 403884279236.dkr.ecr.us-east-2.amazonaws.com/nareshprk/flask:${{ github.sha }}
