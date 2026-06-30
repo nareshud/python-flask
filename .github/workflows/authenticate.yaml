@@ -1,0 +1,22 @@
+name: CI authenticate
+
+on:
+  push:
+    branches:
+      - flask/app
+  workflow_dispatch: 
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+    - name: Configure AWS Credentials
+      uses: actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: arn:aws:iam::403884279236:role/githubactions
+        aws-region: us-east-2
+    - name: verify sts
+      run: aws sts get-caller-identity
+      
