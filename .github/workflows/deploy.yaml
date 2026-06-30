@@ -1,9 +1,6 @@
 name: python CI pipeline
 
 on:
-  push:
-    branches:
-      - flask/app
   workflow_dispatch: 
 
 jobs:
